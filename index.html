@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letter Rush：星号词阵 | v0.2</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">LR</div>
+        <div>
+          <div class="brand-title">Letter Rush</div>
+          <div class="brand-subtitle">星号词阵 · 本地模拟多人抢答原型</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="rulesTopBtn" class="btn-ghost btn-small" type="button">玩法说明</button>
+        <div class="pill">v0.2 · 本地试玩版</div>
+      </div>
+    </header>
+
+    <main>
+      <section id="homeScreen" class="screen active">
+        <div class="hero-grid">
+          <div class="card hero-card">
+            <div class="kicker">BOKE VIBE JAM · 本地试玩 · 可部署单页</div>
+            <h1><span class="gradient-text">LETTER</span><br />RUSH</h1>
+            <p class="hero-desc">
+              创建一个模拟房间，从主题词库随机抽取 10 个隐藏单词。玩家开字母、抢答猜词，越早猜中得分越高。
+              当前 v0.2 是纯前端本地试玩版，可直接部署预览；后续 v0.3 可接入 Firebase / Socket 扩展为真实多人联机版。
+            </p>
+            <div class="feature-row">
+              <div class="feature"><b>开字母</b><span>选择 A-Z 中任一字母，所有单词中的对应位置同步揭示。</span></div>
+              <div class="feature"><b>抢答</b><span>选择单词编号并输入答案。答对抢占该词得分，答错扣分。</span></div>
+              <div class="feature"><b>词库</b><span>内置多主题词库，也支持粘贴自定义词库。</span></div>
+            </div>
+          </div>
+
+          <div class="card setup-card">
+            <h2 class="section-title">开始一局</h2>
+            <p class="section-desc">先生成一个本地模拟房间。v0.2 聚焦完整玩法闭环、提交材料和在线静态部署，是后续联机版基础。</p>
+
+            <label for="nicknameInput">你的昵称</label>
+            <input id="nicknameInput" maxlength="16" placeholder="例如 Whalica" value="Whalica" />
+
+            <div class="form-row">
+              <div>
+                <label for="themeSelect">主题词库</label>
+                <select id="themeSelect">
+                  <option value="programming">程序设计术语</option>
+                  <option value="cet4">CET4 高频词</option>
+                  <option value="campus">校园生活</option>
+                  <option value="games">游戏与动漫</option>
+                  <option value="custom">自定义词库</option>
+                </select>
+              </div>
+              <div>
+                <label for="roundTimeSelect">对局时长</label>
+                <select id="roundTimeSelect">
+                  <option value="180">3 分钟</option>
+                  <option value="300" selected>5 分钟</option>
+                  <option value="600">10 分钟</option>
+                  <option value="0">不限时</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="customWordsPanel" class="hidden">
+              <label for="customWordsInput">自定义词库</label>
+              <textarea id="customWordsInput" placeholder="每行一个词，或用逗号分隔。至少 10 个。\n例如：\nalgorithm\nnetwork\nvariable"></textarea>
+              <div class="hint">支持英文单词、短语、连字符。空格和符号会直接显示，字母会隐藏。</div>
+            </div>
+
+            <label for="botCountSelect">机器人玩家</label>
+            <select id="botCountSelect">
+              <option value="0">不添加</option>
+              <option value="1" selected>1 个机器人</option>
+              <option value="2">2 个机器人</option>
+              <option value="3">3 个机器人</option>
+            </select>
+
+            <div class="checkbox-row">
+              <input id="autoBotCheck" type="checkbox" checked />
+              <span>开字母后让机器人概率抢答，增强单人试玩效果</span>
+            </div>
+
+            <div id="homeAlert" class="alert"></div>
+
+            <div class="btn-row">
+              <button id="createRoomBtn" class="btn-primary">创建模拟房间</button>
+              <button id="quickStartBtn" class="btn-ghost">直接开始</button>
+              <button id="rulesBtn" class="btn-ghost" type="button">查看玩法</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="lobbyScreen" class="screen">
+        <div class="lobby-grid">
+          <div class="card lobby-card">
+            <h2 class="section-title">等待房间</h2>
+            <p class="section-desc">当前是本地模拟房间。真实联机版可以把此处替换为 Firebase 房间同步。</p>
+            <div id="roomCode" class="room-code">----</div>
+            <div class="btn-row">
+              <button id="copyRoomBtn" class="btn-ghost">复制房间号</button>
+              <button id="backHomeBtn" class="btn-ghost">返回首页</button>
+            </div>
+            <p class="hint">说明：本 MVP 不连接服务器，房间号用于展示完整交互流程。</p>
+          </div>
+
+          <div class="card lobby-card">
+            <h2 class="section-title">玩家列表</h2>
+            <p class="section-desc">可添加本地玩家，模拟多人轮流操作。排行榜和日志会按玩家记录。</p>
+            <div id="lobbyPlayers" class="players-list"></div>
+
+            <div class="form-row" style="margin-top: 16px;">
+              <input id="addPlayerInput" maxlength="16" placeholder="添加本地玩家昵称" />
+              <button id="addPlayerBtn" class="btn-good">添加玩家</button>
+            </div>
+            <div id="lobbyAlert" class="alert"></div>
+            <div class="btn-row">
+              <button id="startGameBtn" class="btn-primary">开始游戏</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gameScreen" class="screen">
+        <div class="game-layout">
+          <div class="card game-card">
+            <div class="game-head">
+              <div class="stat">
+                <div id="statRoom" class="stat-value">----</div>
+                <div class="stat-label">房间号</div>
+              </div>
+              <div class="stat">
+                <div id="statScore" class="stat-value">26</div>
+                <div class="stat-label">当前答对分</div>
+              </div>
+              <div class="stat">
+                <div id="statLetters" class="stat-value">0</div>
+                <div class="stat-label">已开字母</div>
+              </div>
+              <div class="stat">
+                <div id="statTimer" class="stat-value">--:--</div>
+                <div class="stat-label">剩余时间</div>
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 16px;">
+              <div>
+                <label for="activePlayerSelect" style="margin-top:0;">当前操作玩家</label>
+                <select id="activePlayerSelect"></select>
+              </div>
+              <div>
+                <label style="margin-top:0;">已开字母</label>
+                <div id="revealedLettersText" class="tag">暂无</div>
+              </div>
+            </div>
+
+            <h2 class="section-title">词阵</h2>
+            <p class="section-desc">点击某个词卡可选中抢答目标。已猜中的单词会锁定，不再重复得分。</p>
+            <div id="wordGrid" class="word-grid"></div>
+
+            <div id="lettersPanel" class="letters"></div>
+
+            <div class="guess-box">
+              <h3 class="section-title" style="font-size:16px;">抢答</h3>
+              <div class="inline-fields">
+                <div>
+                  <label for="guessWordSelect">单词编号</label>
+                  <select id="guessWordSelect"></select>
+                </div>
+                <div>
+                  <label for="guessInput">答案</label>
+                  <input id="guessInput" placeholder="输入完整答案，不区分大小写" />
+                </div>
+              </div>
+              <div id="gameAlert" class="alert"></div>
+              <div class="btn-row">
+                <button id="submitGuessBtn" class="btn-primary">提交抢答</button>
+                <button id="finishGameBtn" class="btn-danger">结束本局</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="side-stack">
+            <div class="card side-card">
+              <h2 class="section-title">排行榜</h2>
+              <p class="section-desc">答对越早，分数越高；猜错扣 1 分。</p>
+              <div id="rankingList" class="ranking-list"></div>
+            </div>
+            <div class="card side-card">
+              <h2 class="section-title">操作日志</h2>
+              <div id="logList" class="log-list"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="resultScreen" class="screen">
+        <div class="result-layout">
+          <div class="card result-card">
+            <div class="winner-box">
+              <div class="tag good">游戏结束</div>
+              <p class="small-muted" style="margin:18px 0 8px;">本局冠军</p>
+              <div id="winnerName" class="winner-name gradient-text">-</div>
+            </div>
+            <h2 class="section-title">最终排名</h2>
+            <div id="finalRanking" class="ranking-list"></div>
+            <div class="btn-row">
+              <button id="restartBtn" class="btn-primary">再来一局</button>
+              <button id="resultHomeBtn" class="btn-ghost">返回首页</button>
+            </div>
+          </div>
+
+          <div class="card result-card">
+            <h2 class="section-title">完整答案</h2>
+            <p class="section-desc">用于结算复盘。后续联机版可增加历史战绩和分享图。</p>
+            <div id="answersList" class="answers-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="project-footer">
+      <span>Letter Rush v0.2</span>
+      <span>本地试玩 / 模拟多人 / 静态网页原型</span>
+      <span>后续计划：在线房间同步、并发抢答保护、AI 词库生成</span>
+    </footer>
+  </div>
+
+
+  <div id="rulesModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2 id="rulesTitle" class="section-title">玩法说明</h2>
+          <p class="section-desc">v0.2 为本地试玩版，支持本地模拟多人和机器人玩家。</p>
+        </div>
+        <button id="closeRulesBtn" class="btn-ghost btn-small" type="button">关闭</button>
+      </div>
+      <ol class="rules-list">
+        <li>每局从所选主题词库中随机抽取 10 个单词或短语，初始字母显示为星号。</li>
+        <li>点击 A-Z 字母后，所有未猜中单词中的对应位置会同步揭示。</li>
+        <li>玩家可以随时选择某个单词编号并提交完整答案进行抢答。</li>
+        <li>答对得分为 <code>max(1, 26 - 已开字母数量)</code>，越早答对收益越高。</li>
+        <li>答错扣 1 分；已猜中的单词会锁定，不会重复得分。</li>
+        <li>所有单词被猜出、倒计时结束或玩家手动结束后进入结算页。</li>
+      </ol>
+      <div class="version-note">
+        当前房间号用于展示完整交互流程，不连接真实服务器。真实在线联机将在 v0.3 通过 Firebase / WebSocket 扩展。
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
