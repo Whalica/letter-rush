@@ -1,10 +1,21 @@
-Letter Rush v0.2.1
-本地试玩版 / 提交友好版 MVP / 独立词库文件版
+Letter Rush v0.2.1 fixed
+本地试玩版 / 提交友好版 MVP / 独立词库文件版 / 文档修正版
 
-更新内容：
-1. 将原 main.js 内置词库拆分至根目录 wordbanks/。
-2. 新增 wordbanks/programming.js、cet4.js、campus.js、games.js。
-3. main.js 改为从 window.LETTER_RUSH_WORDBANKS 读取词库。
-4. 主题词库下拉框改为根据已加载词库自动生成。
-5. 新增 wordbanks/README.md，说明词库格式与新增方式。
-6. README.md 更新词库维护说明。
+代码状态：
+1. 当前包未修改 index.html、main.js、style.css 或 wordbanks/*.js。
+2. 已保留本地模拟多人、机器人玩家、独立词库、自定义词库、操作日志和结算复盘功能。
+3. 词库通过 window.LETTER_RUSH_WORDBANKS 注册，并在 index.html 中于 main.js 之前加载。
+
+词库状态：
+1. wordbanks/programming.js：程序设计术语，26 条。
+2. wordbanks/cet4.js：CET4 高频词，24 条。
+3. wordbanks/campus.js：校园生活，20 条。
+4. wordbanks/games.js：游戏与动漫，22 条。
+5. wordbanks/competitive_programming.js：算法竞赛术语，236 条。
+
+本次文档修正：
+1. 修正 README.md 的文件结构说明，补充 competitive_programming.js、screenshots/README.md、prompt-logv0.1.md、prompt-logv0.2.md。
+2. 修正 wordbanks/README.md 的当前词库列表，补充算法竞赛词库与 GitHub Pages 排查说明。
+3. 修正 screenshots/README.md，补充 home/lobby/game/result 四类截图建议。
+4. 更新 work-description.md，使作品说明更适合提交材料。
+5. 校正 prompt-logv0.2.md 中算法竞赛词库数量为 236 条。
