@@ -714,3 +714,32 @@ AI 基于现有最后一次生成的 Letter Rush MVP 代码进入 v0.2 迭代，
 - `LetterRush_v0.2/version.txt`
 - `LetterRush_v0.2.zip`
 
+
+---
+
+## 8. v0.2.1 词库独立拆分阶段
+
+### 人工输入
+
+新要求：要求独立拆分出词库，根目录建立词库文件夹，内部存放词库文件，方便灵活更新词库。
+
+### AI 回复与处理摘要
+
+AI 将该需求定位为 v0.2.1 迭代：在不改变核心玩法与页面结构的前提下，把原先写在 `main.js` 中的内置词库拆分到根目录 `wordbanks/` 文件夹中。考虑到当前作品仍需支持直接双击打开 `index.html` 的本地试玩场景，AI 选择使用可被浏览器直接加载的 `.js` 数据文件，而不是完全依赖 `fetch` 读取 `.json` 或 `.txt`，避免 `file://` 环境下浏览器安全策略阻止本地文件读取。
+
+### 本阶段代码与文件调整
+
+1. 新建 `wordbanks/` 目录。
+2. 新增 `wordbanks/programming.js`，存放程序设计术语词库。
+3. 新增 `wordbanks/cet4.js`，存放 CET4 高频词库。
+4. 新增 `wordbanks/campus.js`，存放校园生活词库。
+5. 新增 `wordbanks/games.js`，存放游戏与动漫词库。
+6. 新增 `wordbanks/README.md`，说明词库文件格式、新增词库步骤和维护注意事项。
+7. 修改 `index.html`，在 `main.js` 前加载各个词库文件。
+8. 修改 `main.js`，删除原硬编码 `dictionaries`，改为读取 `window.LETTER_RUSH_WORDBANKS`。
+9. 修改主题词库下拉框生成逻辑，使其根据已加载的词库文件自动生成选项。
+10. 更新 `README.md`、`work-description.md`、`version.txt`，补充独立词库文件说明。
+
+### 本阶段产出
+
+产出 `Letter Rush v0.2.1`：本地试玩版 / 提交友好版 MVP / 独立词库文件版。该版本使词库内容与游戏主逻辑解耦，后续扩展词库时主要修改 `wordbanks/` 目录即可。

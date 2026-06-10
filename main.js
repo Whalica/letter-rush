@@ -1,26 +1,45 @@
-const dictionaries = {
-      programming: [
-        'algorithm', 'binary search', 'segment tree', 'priority queue', 'recursion', 'dynamic programming',
-        'variable', 'compiler', 'function', 'pointer', 'database', 'network', 'frontend', 'backend',
-        'container', 'hash table', 'graph theory', 'iteration', 'debugging', 'asynchronous', 'interface',
-        'middleware', 'transaction', 'repository', 'deployment', 'authentication'
-      ],
-      cet4: [
-        'achieve', 'benefit', 'challenge', 'develop', 'efficient', 'frequent', 'graduate', 'hesitate',
-        'improve', 'journey', 'knowledge', 'language', 'memory', 'necessary', 'opinion', 'practice',
-        'quality', 'research', 'strategy', 'technology', 'university', 'valuable', 'wonderful', 'youth'
-      ],
-      campus: [
-        'library', 'classroom', 'dormitory', 'cafeteria', 'laboratory', 'scholarship', 'competition',
-        'association', 'volunteer', 'presentation', 'examination', 'basketball', 'graduation', 'homework',
-        'lecture hall', 'computer room', 'student card', 'campus map', 'midterm', 'final week'
-      ],
-      games: [
-        'checkpoint', 'inventory', 'boss fight', 'side quest', 'achievement', 'multiplayer', 'character',
-        'animation', 'soundtrack', 'strategy', 'combo', 'cooldown', 'dialogue', 'ranking', 'tournament',
-        'controller', 'keyboard', 'adventure', 'story mode', 'open world', 'pixel art', 'level design'
-      ]
-    };
+const externalWordbanks = window.LETTER_RUSH_WORDBANKS || {};
+
+    function getAvailableWordbanks() {
+      return Object.entries(externalWordbanks)
+        .filter(([, bank]) => bank && Array.isArray(bank.words) && bank.words.length > 0)
+        .map(([key, bank]) => ({
+          key,
+          label: bank.label || key,
+          description: bank.description || '',
+          words: bank.words
+        }));
+    }
+
+    function populateThemeSelect() {
+      const select = $('themeSelect');
+      if (!select) return;
+      const current = select.value;
+      const banks = getAvailableWordbanks();
+      select.innerHTML = '';
+
+      banks.forEach(bank => {
+        const option = document.createElement('option');
+        option.value = bank.key;
+        option.textContent = bank.label;
+        select.appendChild(option);
+      });
+
+      const customOption = document.createElement('option');
+      customOption.value = 'custom';
+      customOption.textContent = '自定义词库';
+      select.appendChild(customOption);
+
+      if (current && (current === 'custom' || banks.some(bank => bank.key === current))) {
+        select.value = current;
+      } else if (banks.length) {
+        select.value = banks[0].key;
+      } else {
+        select.value = 'custom';
+      }
+
+      $('customWordsPanel')?.classList.toggle('hidden', select.value !== 'custom');
+    }
 
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const $ = (id) => document.getElementById(id);
@@ -98,7 +117,11 @@ const dictionaries = {
           throw new Error('自定义词库至少需要 10 个词或短语。');
         }
       } else {
-        words = dictionaries[theme] || dictionaries.programming;
+        const bank = externalWordbanks[theme];
+        if (!bank || !Array.isArray(bank.words) || bank.words.length < 10) {
+          throw new Error('所选词库不存在或词条不足 10 个，请检查 wordbanks/ 目录。');
+        }
+        words = bank.words;
       }
       return shuffle(words).slice(0, 10);
     }
@@ -468,6 +491,8 @@ const dictionaries = {
       const modal = $('rulesModal');
       if (modal) modal.classList.add('hidden');
     }
+
+    populateThemeSelect();
 
     $('themeSelect').addEventListener('change', () => {
       $('customWordsPanel').classList.toggle('hidden', $('themeSelect').value !== 'custom');

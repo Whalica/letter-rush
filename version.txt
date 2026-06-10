@@ -1,18 +1,10 @@
-Letter Rush v0.2
+Letter Rush v0.2.1
+本地试玩版 / 提交友好版 MVP / 独立词库文件版
 
-版本定位：提交友好版本地试玩 MVP
-
-已完成：
-- 纯前端静态网页
-- 本地模拟房间
-- 本地多人和机器人玩家
-- 词库选择与自定义词库
-- 开字母、抢答、计分、排行榜、日志、结算
-- 玩法说明弹窗
-- README / 作品说明 / Prompt 日志初版
-
-未完成：
-- 真实在线多人联机
-- Firebase / WebSocket 同步
-- 并发抢答原子保护
-- 真实 AI API 词库生成
+更新内容：
+1. 将原 main.js 内置词库拆分至根目录 wordbanks/。
+2. 新增 wordbanks/programming.js、cet4.js、campus.js、games.js。
+3. main.js 改为从 window.LETTER_RUSH_WORDBANKS 读取词库。
+4. 主题词库下拉框改为根据已加载词库自动生成。
+5. 新增 wordbanks/README.md，说明词库格式与新增方式。
+6. README.md 更新词库维护说明。

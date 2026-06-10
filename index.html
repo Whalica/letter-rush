@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Letter Rush：星号词阵 | v0.2</title>
+  <title>Letter Rush：星号词阵 | v0.2.1</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -18,7 +18,7 @@
       </div>
       <div class="topbar-actions">
         <button id="rulesTopBtn" class="btn-ghost btn-small" type="button">玩法说明</button>
-        <div class="pill">v0.2 · 本地试玩版</div>
+        <div class="pill">v0.2.1 · 本地试玩版</div>
       </div>
     </header>
 
@@ -30,18 +30,18 @@
             <h1><span class="gradient-text">LETTER</span><br />RUSH</h1>
             <p class="hero-desc">
               创建一个模拟房间，从主题词库随机抽取 10 个隐藏单词。玩家开字母、抢答猜词，越早猜中得分越高。
-              当前 v0.2 是纯前端本地试玩版，可直接部署预览；后续 v0.3 可接入 Firebase / Socket 扩展为真实多人联机版。
+              当前 v0.2.1 是纯前端本地试玩版，词库已独立拆分到 wordbanks/ 目录，便于后续灵活扩展；v0.3 可接入 Firebase / Socket 扩展为真实多人联机版。
             </p>
             <div class="feature-row">
               <div class="feature"><b>开字母</b><span>选择 A-Z 中任一字母，所有单词中的对应位置同步揭示。</span></div>
               <div class="feature"><b>抢答</b><span>选择单词编号并输入答案。答对抢占该词得分，答错扣分。</span></div>
-              <div class="feature"><b>词库</b><span>内置多主题词库，也支持粘贴自定义词库。</span></div>
+              <div class="feature"><b>词库</b><span>主题词库独立存放于 wordbanks/ 目录，也支持粘贴自定义词库。</span></div>
             </div>
           </div>
 
           <div class="card setup-card">
             <h2 class="section-title">开始一局</h2>
-            <p class="section-desc">先生成一个本地模拟房间。v0.2 聚焦完整玩法闭环、提交材料和在线静态部署，是后续联机版基础。</p>
+            <p class="section-desc">先生成一个本地模拟房间。v0.2.1 聚焦完整玩法闭环、提交材料、独立词库文件和在线静态部署，是后续联机版基础。</p>
 
             <label for="nicknameInput">你的昵称</label>
             <input id="nicknameInput" maxlength="16" placeholder="例如 Whalica" value="Whalica" />
@@ -50,10 +50,6 @@
               <div>
                 <label for="themeSelect">主题词库</label>
                 <select id="themeSelect">
-                  <option value="programming">程序设计术语</option>
-                  <option value="cet4">CET4 高频词</option>
-                  <option value="campus">校园生活</option>
-                  <option value="games">游戏与动漫</option>
                   <option value="custom">自定义词库</option>
                 </select>
               </div>
@@ -227,7 +223,7 @@
     </main>
 
     <footer class="project-footer">
-      <span>Letter Rush v0.2</span>
+      <span>Letter Rush v0.2.1</span>
       <span>本地试玩 / 模拟多人 / 静态网页原型</span>
       <span>后续计划：在线房间同步、并发抢答保护、AI 词库生成</span>
     </footer>
@@ -239,12 +235,12 @@
       <div class="modal-head">
         <div>
           <h2 id="rulesTitle" class="section-title">玩法说明</h2>
-          <p class="section-desc">v0.2 为本地试玩版，支持本地模拟多人和机器人玩家。</p>
+          <p class="section-desc">v0.2.1 为本地试玩版，支持本地模拟多人、机器人玩家和独立词库文件。</p>
         </div>
         <button id="closeRulesBtn" class="btn-ghost btn-small" type="button">关闭</button>
       </div>
       <ol class="rules-list">
-        <li>每局从所选主题词库中随机抽取 10 个单词或短语，初始字母显示为星号。</li>
+        <li>每局从所选主题词库文件中随机抽取 10 个单词或短语，初始字母显示为星号。</li>
         <li>点击 A-Z 字母后，所有未猜中单词中的对应位置会同步揭示。</li>
         <li>玩家可以随时选择某个单词编号并提交完整答案进行抢答。</li>
         <li>答对得分为 <code>max(1, 26 - 已开字母数量)</code>，越早答对收益越高。</li>
@@ -257,6 +253,11 @@
     </div>
   </div>
 
+  <script src="wordbanks/programming.js"></script>
+  <script src="wordbanks/cet4.js"></script>
+  <script src="wordbanks/campus.js"></script>
+  <script src="wordbanks/games.js"></script>
+  <script src="wordbanks/competitive_programming.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
